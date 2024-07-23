@@ -1,0 +1,70 @@
+package gift.application.member.service.apicaller;
+
+import static io.jsonwebtoken.Header.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import java.net.URI;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+@Component
+public class KaKaoApiCaller {
+
+    private static final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
+    private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
+    private static final String GRANT_TYPE = "authorization_code";
+
+    private final RestTemplate restTemplate;
+
+    public KaKaoApiCaller(RestTemplateBuilder restTemplateBuilder) {
+        restTemplate = new RestTemplateBuilder().build();
+    }
+
+    /**
+     * 인가 코드를 사용해서 토큰을 가져옴
+     */
+    public String getAccessToken(String authorizationCode) {
+        var headers = new HttpHeaders();
+        headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE);
+        var body = createGetAccessTokenBody(authorizationCode);
+        var request = new RequestEntity<>(body, headers, HttpMethod.POST,
+            URI.create(KAKAO_TOKEN_URL));
+        ResponseEntity<JsonNode> response = restTemplate.exchange(request, JsonNode.class);
+        return response.getBody().get("access_token").asText();
+    }
+
+    /**
+     * 토큰을 사용해서 사용자 정보를 가져옴
+     */
+    public JsonNode getUserInfo(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.add(CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        var request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(KAKAO_USER_INFO_URL));
+
+        ResponseEntity<JsonNode> responseNode = restTemplate.exchange(
+            request, JsonNode.class);
+        return responseNode.getBody();
+    }
+
+    private static LinkedMultiValueMap<String, String> createGetAccessTokenBody(
+        String authorizationCode) {
+        var body = new LinkedMultiValueMap<String, String>();
+
+        body.add("grant_type", GRANT_TYPE);
+        body.add("client_id", "f1af4bbe948114fcd10611ccaff2928a");
+        body.add("redirect_uri", "http://localhost:8080");
+        body.add("code", authorizationCode);
+        return body;
+    }
+}
