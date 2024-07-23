@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class MemberJdbcRepository implements MemberRepository {
 
-    private static final String USER_INSERT = "INSERT INTO member (email, password, name, role) VALUES (?, ?, ?,?)";
+    private static final String USER_INSERT = "INSERT INTO member (email, password, name, role, provider) VALUES (?, ?, ?,?,?)";
     private static final String USER_SELECT_BY_ID = "SELECT id, email, password, name, role FROM member WHERE id = ?";
     private static final String USER_SELECT_BY_EMAIL = "SELECT id, email, password, name, role FROM member WHERE email = ?";
 
