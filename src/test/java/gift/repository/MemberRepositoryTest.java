@@ -4,13 +4,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import gift.model.member.Member;
+import gift.model.member.Provider;
 import gift.model.member.Role;
 import gift.repository.member.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -26,7 +26,7 @@ public class MemberRepositoryTest {
     @DisplayName("회원 저장")
     void save() {
         // given
-        Member member = new Member(1L, "member1@asd.com", "asd", "asd", Role.USER);
+        Member member = new Member(1L, "member1@asd.com", "asd", "asd", Role.USER, Provider.ORIGIN);
         // when
         memberRepository.save(member);
         // then
@@ -46,7 +46,7 @@ public class MemberRepositoryTest {
     @DisplayName("회원 삭제")
     void delete() {
         // given
-        Member member = new Member(1L, "member1@asd.com", "asd", "asd", Role.USER);
+        Member member = new Member(1L, "member1@asd.com", "asd", "asd", Role.USER, Provider.ORIGIN);
         memberRepository.save(member);
         // when
         memberRepository.deleteById(1L);
@@ -58,7 +58,7 @@ public class MemberRepositoryTest {
     @DisplayName("회원 이메일 조회")
     void getByEmail() {
         // given
-        Member member = new Member(1L, "member1@asd.com", "asd", "asd", Role.USER);
+        Member member = new Member(1L, "member1@asd.com", "asd", "asd", Role.USER, Provider.ORIGIN);
         memberRepository.save(member);
         // when
         Member findMember = memberRepository.findByEmail("member1@asd.com").get();
