@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import gift.global.validate.TimeOutException;
 import java.net.URI;
 import java.time.Duration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,6 +27,10 @@ public class KaKaoApiCaller {
     private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String GRANT_TYPE = "authorization_code";
     private static final Duration TIMEOUT = Duration.ofSeconds(2);
+    @Value("${kakao.client_id}")
+    private String CLIENT_ID;
+    @Value("${kakao.redirect_uri}")
+    private String REDIRECT_URI;
 
 
     private final RestTemplate restTemplate;
@@ -44,6 +49,7 @@ public class KaKaoApiCaller {
         var headers = new HttpHeaders();
         headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE);
         var body = createGetAccessTokenBody(authorizationCode);
+        System.out.println(body);
         var request = new RequestEntity<>(body, headers, HttpMethod.POST,
             URI.create(KAKAO_TOKEN_URL));
         try {
@@ -52,7 +58,7 @@ public class KaKaoApiCaller {
         } catch (ResourceAccessException e) {
             throw new TimeOutException("네트워크 연결이 불안정 합니다.", e);
         } catch (HttpClientErrorException e) {
-            throw new IllegalArgumentException("인가 코드가 유효하지 않습니다.", e);
+            throw new IllegalArgumentException("카카오 인가 코드가 유효하지 않습니다.", e);
         }
     }
 
@@ -73,13 +79,13 @@ public class KaKaoApiCaller {
         }
     }
 
-    private static LinkedMultiValueMap<String, String> createGetAccessTokenBody(
+    private LinkedMultiValueMap<String, String> createGetAccessTokenBody(
         String authorizationCode) {
         var body = new LinkedMultiValueMap<String, String>();
 
         body.add("grant_type", GRANT_TYPE);
-        body.add("client_id", "f1af4bbe948114fcd10611ccaff2928a");
-        body.add("redirect_uri", "http://localhost:8080");
+        body.add("client_id", CLIENT_ID);
+        body.add("redirect_uri", REDIRECT_URI);
         body.add("code", authorizationCode);
         return body;
     }
