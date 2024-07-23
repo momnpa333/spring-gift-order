@@ -1,4 +1,4 @@
-package gift.application.member;
+package gift.application.member.service;
 
 import gift.global.auth.jwt.JwtProvider;
 import gift.model.member.Member;

@@ -1,12 +1,10 @@
-package gift.controller.oauth;
+package gift.controller.member;
 
-import gift.global.auth.Authorization;
-import gift.model.member.Role;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class AuthPageController {
+public class OAuthPageController {
 
     @GetMapping("/oauth/login")
     public String admin() {
