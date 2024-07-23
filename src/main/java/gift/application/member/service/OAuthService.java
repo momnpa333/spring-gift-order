@@ -24,8 +24,9 @@ public class OAuthService {
     /**
      * 토큰을 사용해서 사용자 정보를 가져오는 로직
      */
-    public void getUserInfo(OAuthCommand.Login command) {
+    public OAuthCommand.MemberInfo getMemberInfo(OAuthCommand.Login command) {
         String accessToken = getAccessToken(command);
-        JsonNode userInfo = kaKaoApiCaller.getUserInfo(accessToken);
+        JsonNode userInfo = kaKaoApiCaller.getMemberInfo(accessToken);
+        return OAuthCommand.MemberInfo.from(userInfo);
     }
 }

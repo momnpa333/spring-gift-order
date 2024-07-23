@@ -21,7 +21,7 @@ public class OAuthController {
     public ResponseEntity<Void> login(
         @RequestBody @Valid OAuthRequest.LoginRequest request
     ) {
-        memberFacade.login(request.toCommand());
+        memberFacade.socialLogin(request.toCommand());
         return null;
     }
 }
