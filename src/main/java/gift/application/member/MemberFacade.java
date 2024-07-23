@@ -1,5 +1,6 @@
 package gift.application.member;
 
+import gift.application.member.dto.MemberCommand;
 import gift.application.member.dto.OAuthCommand;
 import gift.application.member.service.MemberService;
 import gift.application.member.service.OAuthService;
@@ -16,8 +17,10 @@ public class MemberFacade {
         this.oAuthService = oAuthService;
     }
 
-    public void login(OAuthCommand.Login command) {
-        oAuthService.getUserInfo(command);
+    public void socialLogin(OAuthCommand.Login command) {
+        OAuthCommand.MemberInfo memberInfo = oAuthService.getMemberInfo(command);
+        MemberCommand.Create create = memberInfo.toCreateCommand();
+        memberService.socialLogin(create);
     }
 
 }
