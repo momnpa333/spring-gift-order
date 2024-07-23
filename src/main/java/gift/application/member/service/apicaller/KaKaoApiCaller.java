@@ -15,6 +15,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -50,6 +51,8 @@ public class KaKaoApiCaller {
             return response.getBody().get("access_token").asText();
         } catch (ResourceAccessException e) {
             throw new TimeOutException("네트워크 연결이 불안정 합니다.", e);
+        } catch (HttpClientErrorException e) {
+            throw new IllegalArgumentException("인가 코드가 유효하지 않습니다.", e);
         }
     }
 
