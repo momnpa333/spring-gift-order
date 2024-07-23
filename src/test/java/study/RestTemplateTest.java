@@ -48,10 +48,8 @@ public class RestTemplateTest {
         var url = "https://kapi.kakao.com/v2/user/me";
         var headers = new HttpHeaders();
         headers.add("Authorization",
-            "Bearer yw_gg7YAFq5Y4v2gFaNmvI17OpJBe5quAAAAAQo9cusAAAGQ2eV8sNQ0RDl69jWm");
+            "Bearer 6z9da9kwzkFHzxh2mK459F2pM8duTt8pAAAAAQo8JFoAAAGQ3qqqJdQ0RDl69jWm");
         headers.add(CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        HttpHeaders headerss = new HttpHeaders();
-        HttpEntity entity = new HttpEntity(headerss);
 
         var request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(url));
         ResponseEntity<JsonNode> response = client.exchange(request, JsonNode.class);
