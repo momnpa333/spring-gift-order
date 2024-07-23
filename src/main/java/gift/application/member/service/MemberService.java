@@ -7,6 +7,7 @@ import gift.global.validate.NotFoundException;
 import gift.repository.member.MemberRepository;
 import gift.application.member.dto.MemberCommand;
 import gift.application.member.dto.MemberModel;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,5 +47,16 @@ public class MemberService {
         var member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("User not found."));
         return MemberModel.Info.from(member);
+    }
+
+    public String socialLogin(MemberCommand.Create create) {
+        if (memberRepository.existsByEmail(create.email())) {
+            var member = memberRepository.findByEmail(create.email())
+                .orElseThrow(() -> new NotFoundException("User not found."));
+            return jwtProvider.createToken(member.getId(), member.getRole());
+        }
+
+        var member = memberRepository.save(create.toEntity());
+        return jwtProvider.createToken(member.getId(), member.getRole());
     }
 }
