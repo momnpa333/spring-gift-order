@@ -4,7 +4,9 @@ import static io.jsonwebtoken.Header.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import gift.global.validate.TimeOutException;
 import java.net.URI;
+import java.time.Duration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,6 +15,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -21,11 +24,16 @@ public class KaKaoApiCaller {
     private static final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
     private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String GRANT_TYPE = "authorization_code";
+    private static final Duration TIMEOUT = Duration.ofSeconds(2);
+
 
     private final RestTemplate restTemplate;
 
     public KaKaoApiCaller(RestTemplateBuilder restTemplateBuilder) {
-        restTemplate = new RestTemplateBuilder().build();
+        this.restTemplate = restTemplateBuilder
+            .setConnectTimeout(TIMEOUT)
+            .setReadTimeout(TIMEOUT)
+            .build();
     }
 
     /**
@@ -37,8 +45,12 @@ public class KaKaoApiCaller {
         var body = createGetAccessTokenBody(authorizationCode);
         var request = new RequestEntity<>(body, headers, HttpMethod.POST,
             URI.create(KAKAO_TOKEN_URL));
-        ResponseEntity<JsonNode> response = restTemplate.exchange(request, JsonNode.class);
-        return response.getBody().get("access_token").asText();
+        try {
+            ResponseEntity<JsonNode> response = restTemplate.exchange(request, JsonNode.class);
+            return response.getBody().get("access_token").asText();
+        } catch (ResourceAccessException e) {
+            throw new TimeOutException("네트워크 연결이 불안정 합니다.", e);
+        }
     }
 
     /**
@@ -50,9 +62,12 @@ public class KaKaoApiCaller {
         headers.add(CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         var request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(KAKAO_USER_INFO_URL));
 
-        ResponseEntity<JsonNode> responseNode = restTemplate.exchange(
-            request, JsonNode.class);
-        return responseNode.getBody();
+        try {
+            ResponseEntity<JsonNode> responseNode = restTemplate.exchange(request, JsonNode.class);
+            return responseNode.getBody();
+        } catch (ResourceAccessException e) {
+            throw new TimeOutException("네트워크 연결이 불안정 합니다.", e);
+        }
     }
 
     private static LinkedMultiValueMap<String, String> createGetAccessTokenBody(
