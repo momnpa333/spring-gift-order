@@ -13,7 +13,13 @@ public class MemberCommand {
     ) {
 
         public Member toEntity() {
-            return new Member(null, email, password, name, role);
+            return Member.create(
+                null,
+                email,
+                password,
+                name,
+                role
+            );
         }
     }
 
