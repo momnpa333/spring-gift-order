@@ -1,6 +1,7 @@
 package gift.application.member.dto;
 
 import gift.model.member.Member;
+import gift.model.member.Provider;
 import gift.model.member.Role;
 
 public class MemberCommand {
@@ -9,7 +10,8 @@ public class MemberCommand {
         String email,
         String password,
         String name,
-        Role role
+        Role role,
+        Provider provider
     ) {
 
         public Member toEntity() {
@@ -18,7 +20,8 @@ public class MemberCommand {
                 email,
                 password,
                 name,
-                role
+                role,
+                provider
             );
         }
     }
