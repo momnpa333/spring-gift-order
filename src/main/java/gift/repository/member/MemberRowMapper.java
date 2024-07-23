@@ -1,6 +1,7 @@
 package gift.repository.member;
 
 import gift.model.member.Member;
+import gift.model.member.Provider;
 import gift.model.member.Role;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +16,8 @@ public class MemberRowMapper implements RowMapper<Member> {
             resultSet.getString("email"),
             resultSet.getString("password"),
             resultSet.getString("name"),
-            Role.valueOf(resultSet.getString("role"))
+            Role.valueOf(resultSet.getString("role")),
+            Provider.valueOf(resultSet.getString("provider"))
         );
     }
 
