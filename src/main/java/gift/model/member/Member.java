@@ -8,11 +8,21 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Entity
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_member_email",
+            columnNames = {"email", "provider"}
+        )
+    }
+)
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -20,7 +30,6 @@ public class Member extends BaseTimeEntity {
     private Long id;
 
     @NotNull
-    @Column(unique = true)
     private String email;
 
     @NotNull
