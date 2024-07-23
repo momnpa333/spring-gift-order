@@ -1,6 +1,7 @@
 package gift.controller.member;
 
 import gift.application.member.MemberFacade;
+import gift.controller.member.dto.MemberResponse;
 import gift.controller.member.dto.OAuthRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,10 @@ public class OAuthController {
     }
 
     @PostMapping("/oauth/login")
-    public ResponseEntity<Void> login(
+    public ResponseEntity<MemberResponse.Login> login(
         @RequestBody @Valid OAuthRequest.LoginRequest request
     ) {
-        memberFacade.socialLogin(request.toCommand());
-        return null;
+        var response = memberFacade.socialLogin(request.toCommand());
+        return ResponseEntity.ok(MemberResponse.Login.from(response));
     }
 }

@@ -17,10 +17,10 @@ public class MemberFacade {
         this.oAuthService = oAuthService;
     }
 
-    public void socialLogin(OAuthCommand.Login command) {
+    public String socialLogin(OAuthCommand.Login command) {
         OAuthCommand.MemberInfo memberInfo = oAuthService.getMemberInfo(command);
         MemberCommand.Create create = memberInfo.toCreateCommand();
-        memberService.socialLogin(create);
+        return memberService.socialLogin(create);
     }
 
 }
