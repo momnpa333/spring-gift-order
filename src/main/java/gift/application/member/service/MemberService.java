@@ -49,6 +49,7 @@ public class MemberService {
         return MemberModel.Info.from(member);
     }
 
+    @Transactional
     public String socialLogin(MemberCommand.Create create) {
         if (memberRepository.existsByEmail(create.email())) {
             var member = memberRepository.findByEmail(create.email())
