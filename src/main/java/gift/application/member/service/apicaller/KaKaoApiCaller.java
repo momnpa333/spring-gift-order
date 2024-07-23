@@ -6,10 +6,8 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VAL
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +44,7 @@ public class KaKaoApiCaller {
     /**
      * 토큰을 사용해서 사용자 정보를 가져옴
      */
-    public JsonNode getUserInfo(String accessToken) {
+    public JsonNode getMemberInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.add(CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
