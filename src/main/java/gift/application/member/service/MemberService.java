@@ -1,5 +1,6 @@
 package gift.application.member.service;
 
+import gift.application.token.TokenManager;
 import gift.global.auth.jwt.JwtProvider;
 import gift.model.member.Member;
 import gift.global.validate.InvalidAuthRequestException;
@@ -8,6 +9,7 @@ import gift.repository.member.MemberRepository;
 import gift.application.member.dto.MemberCommand;
 import gift.application.member.dto.MemberModel;
 import java.util.Optional;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,14 +52,15 @@ public class MemberService {
     }
 
     @Transactional
-    public String socialLogin(MemberCommand.Create create) {
+    public Pair<Long, String> socialLogin(MemberCommand.Create create) {
         if (memberRepository.existsByEmail(create.email())) {
             var member = memberRepository.findByEmail(create.email())
                 .orElseThrow(() -> new NotFoundException("User not found."));
-            return jwtProvider.createToken(member.getId(), member.getRole());
+            return Pair.of(member.getId(),
+                jwtProvider.createToken(member.getId(), member.getRole()));
         }
 
         var member = memberRepository.save(create.toEntity());
-        return jwtProvider.createToken(member.getId(), member.getRole());
+        return Pair.of(member.getId(), jwtProvider.createToken(member.getId(), member.getRole()));
     }
 }
