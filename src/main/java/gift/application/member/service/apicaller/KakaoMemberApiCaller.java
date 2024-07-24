@@ -21,7 +21,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class KaKaoMemberApiCaller {
+public class KakaoMemberApiCaller {
 
     private static final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
     private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
@@ -35,7 +35,7 @@ public class KaKaoMemberApiCaller {
 
     private final RestTemplate restTemplate;
 
-    public KaKaoMemberApiCaller(RestTemplateBuilder restTemplateBuilder) {
+    public KakaoMemberApiCaller(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder
             .setConnectTimeout(TIMEOUT)
             .setReadTimeout(TIMEOUT)
