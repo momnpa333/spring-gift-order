@@ -2,23 +2,23 @@ package gift.application.member.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gift.application.member.dto.OAuthCommand;
-import gift.application.member.service.apicaller.KaKaoApiCaller;
+import gift.application.member.service.apicaller.KaKaoMemberApiCaller;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OAuthService {
 
-    private final KaKaoApiCaller kaKaoApiCaller;
+    private final KaKaoMemberApiCaller kaKaoMemberApiCaller;
 
-    public OAuthService(KaKaoApiCaller kaKaoApiCaller) {
-        this.kaKaoApiCaller = kaKaoApiCaller;
+    public OAuthService(KaKaoMemberApiCaller kaKaoMemberApiCaller) {
+        this.kaKaoMemberApiCaller = kaKaoMemberApiCaller;
     }
 
     /**
      * 인가 코드를 사용해서 토큰 가져오기
      */
     private String getAccessToken(OAuthCommand.Login command) {
-        return kaKaoApiCaller.getAccessToken(command.authorizationCode());
+        return kaKaoMemberApiCaller.getAccessToken(command.authorizationCode());
     }
 
     /**
@@ -26,7 +26,7 @@ public class OAuthService {
      */
     public OAuthCommand.MemberInfo getMemberInfo(OAuthCommand.Login command) {
         String accessToken = getAccessToken(command);
-        JsonNode userInfo = kaKaoApiCaller.getMemberInfo(accessToken);
+        JsonNode userInfo = kaKaoMemberApiCaller.getMemberInfo(accessToken);
         return OAuthCommand.MemberInfo.from(userInfo);
     }
 }
