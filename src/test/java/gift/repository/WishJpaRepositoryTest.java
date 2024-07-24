@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import gift.model.member.Member;
+import gift.model.member.Provider;
 import gift.model.member.Role;
 import gift.model.product.Category;
 import gift.model.product.Product;
@@ -41,7 +42,8 @@ public class WishJpaRepositoryTest {
     @DisplayName("멤버와 상품으로 찜 조회")
     void findByMemberAndProduct() {
         // given
-        Member member = new Member(null, "member1@asd.com", "asd", "asd", Role.USER);
+        Member member = new Member(null, "member1@asd.com", "asd", "asd", Role.USER,
+            Provider.ORIGIN);
         memberRepository.save(member);
 
         Category category = new Category("category", "ABCD", "test", "test");
@@ -68,8 +70,10 @@ public class WishJpaRepositoryTest {
     @DisplayName("멤버로 찜 조회")
     void findAllByMemberByIdDesc() {
         // given
-        Member member1 = new Member(null, "test1.com", "test1", "test1", Role.USER);
-        Member member2 = new Member(null, "test2.com", "test2", "test2", Role.USER);
+        Member member1 = new Member(null, "test1.com", "test1", "test1", Role.USER,
+            Provider.ORIGIN);
+        Member member2 = new Member(null, "test2.com", "test2", "test2", Role.USER,
+            Provider.ORIGIN);
         memberRepository.save(member1);
         memberRepository.save(member2);
 

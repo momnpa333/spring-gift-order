@@ -1,5 +1,6 @@
 package gift.controller.member.dto;
 
+import gift.model.member.Provider;
 import gift.model.member.Role;
 import gift.application.member.dto.MemberCommand;
 import jakarta.validation.constraints.Email;
@@ -16,7 +17,7 @@ public class MemberRequest {
         String name) {
 
         public MemberCommand.Create toCommand() {
-            return new MemberCommand.Create(email, password, name, Role.USER);
+            return new MemberCommand.Create(email, password, name, Role.USER, Provider.ORIGIN);
         }
     }
 
