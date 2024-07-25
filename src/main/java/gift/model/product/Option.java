@@ -72,6 +72,10 @@ public class Option extends BaseTimeEntity {
         return version;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
     public void update(String name, Integer quantity) {
         OptionNameValidator.isValidName(name);
         OptionNameValidator.isValidCount(quantity);
