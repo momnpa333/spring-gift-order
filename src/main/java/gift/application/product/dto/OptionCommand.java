@@ -37,4 +37,11 @@ public class OptionCommand {
         }
 
     }
+
+    public record Purchase(
+        Long optionId,
+        Integer quantity
+    ) {
+
+    }
 }
