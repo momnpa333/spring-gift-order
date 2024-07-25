@@ -13,8 +13,8 @@ public class TokenManager {
     private final TokenRepository tokenRepository;
 
     public TokenManager(KakaoTokenApiCaller kakaoTokenApiCaller, TokenRepository tokenRepository) {
-        this.tokenRepository = tokenRepository;
         this.kakaoTokenApiCaller = kakaoTokenApiCaller;
+        this.tokenRepository = tokenRepository;
     }
 
     /**

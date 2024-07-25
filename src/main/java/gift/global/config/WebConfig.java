@@ -1,4 +1,4 @@
-package gift.global;
+package gift.global.config;
 
 import gift.global.auth.interceptor.AuthenticationInterceptor;
 import gift.global.auth.interceptor.AuthorizationInterceptor;
