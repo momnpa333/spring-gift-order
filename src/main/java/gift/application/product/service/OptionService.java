@@ -78,10 +78,11 @@ public class OptionService {
         backoff = @Backoff(delay = 200)
     )
     @Transactional
-    public void purchaseOption(OptionCommand.Purchase command) {
+    public OptionModel.Info purchaseOption(OptionCommand.Purchase command) {
         Option option = optionRepository.findById(command.optionId())
             .orElseThrow(() -> new NotFoundException("Option not found"));
         option.purchase(command.quantity());
+        return OptionModel.Info.from(option);
     }
 
 
