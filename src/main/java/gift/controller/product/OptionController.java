@@ -68,4 +68,13 @@ public class OptionController {
         optionService.deleteOption(productId, optionId);
         return ResponseEntity.ok("Deleted correctly");
     }
+
+    @Authorization(role = Role.USER)
+    @PostMapping("/products/options/purchase")
+    public ResponseEntity<Void> purchaseOption(
+        @RequestBody @Valid OptionRequest.Purchase request
+    ) {
+        optionService.purchaseOption(request.toCommand());
+        return ResponseEntity.ok().build();
+    }
 }
