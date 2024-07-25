@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VAL
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gift.application.token.dto.TokenSet;
+import gift.global.config.KakaoProperties;
 import gift.global.validate.TimeOutException;
 import java.net.URI;
 import java.time.Duration;
@@ -23,23 +24,12 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class KakaoTokenApiCaller {
 
-    private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private static final String GRANT_TYPE = "authorization_code";
-    private static final String REFRESH_GRANT_TYPE = "refresh_token";
-    private static final Duration TIMEOUT = Duration.ofSeconds(2);
-
-    @Value("${kakao.client_id}")
-    private String CLIENT_ID;
-    @Value("${kakao.redirect_uri}")
-    private String REDIRECT_URI;
-
+    private final KakaoProperties kakaoProperties;
     private final RestTemplate restTemplate;
 
-    public KakaoTokenApiCaller(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder
-            .setConnectTimeout(TIMEOUT)
-            .setReadTimeout(TIMEOUT)
-            .build();
+    public KakaoTokenApiCaller(KakaoProperties kakaoProperties, RestTemplate restTemplate) {
+        this.kakaoProperties = kakaoProperties;
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -51,7 +41,7 @@ public class KakaoTokenApiCaller {
         var body = createGetAccessTokenBody(authorizationCode);
         System.out.println(body);
         var request = new RequestEntity<>(body, headers, HttpMethod.POST,
-            URI.create(KAKAO_TOKEN_URL));
+            URI.create(kakaoProperties.tokenRequestUri()));
         try {
             ResponseEntity<JsonNode> response = restTemplate.exchange(request, JsonNode.class);
             System.out.println(response);
@@ -73,7 +63,7 @@ public class KakaoTokenApiCaller {
         headers.add("Content-Type", "application/x-www-form-urlencoded");
         var body = createUpdateAccessTokenBody(refreshToken);
         var request = new RequestEntity<>(body, headers, HttpMethod.POST,
-            URI.create(KAKAO_TOKEN_URL));
+            URI.create(kakaoProperties.tokenRequestUri()));
         try {
             ResponseEntity<JsonNode> response = restTemplate.exchange(request, JsonNode.class);
             String newAccessToken = response.getBody().get("access_token").asText();
@@ -87,8 +77,8 @@ public class KakaoTokenApiCaller {
     private LinkedMultiValueMap<String, String> createUpdateAccessTokenBody(
         String refreshToken) {
         var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", REFRESH_GRANT_TYPE);
-        body.add("client_id", CLIENT_ID);
+        body.add("grant_type", kakaoProperties.refreshGrantType());
+        body.add("client_id", kakaoProperties.clientId());
         body.add("refresh_token", refreshToken);
         return body;
     }
@@ -96,9 +86,9 @@ public class KakaoTokenApiCaller {
     private LinkedMultiValueMap<String, String> createGetAccessTokenBody(
         String authorizationCode) {
         var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", GRANT_TYPE);
-        body.add("client_id", CLIENT_ID);
-        body.add("redirect_uri", REDIRECT_URI);
+        body.add("grant_type", kakaoProperties.grantType());
+        body.add("client_id", kakaoProperties.clientId());
+        body.add("redirect_uri", kakaoProperties.redirectUri());
         body.add("code", authorizationCode);
         return body;
     }
