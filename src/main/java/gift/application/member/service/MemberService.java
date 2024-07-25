@@ -1,6 +1,7 @@
 package gift.application.member.service;
 
 import gift.application.token.TokenManager;
+import gift.application.token.dto.TokenSet;
 import gift.global.auth.jwt.JwtProvider;
 import gift.model.member.Member;
 import gift.global.validate.InvalidAuthRequestException;
@@ -53,14 +54,14 @@ public class MemberService {
 
     @Transactional
     public Pair<Long, String> socialLogin(MemberCommand.Create create) {
-        if (memberRepository.existsByEmail(create.email())) {
-            var member = memberRepository.findByEmail(create.email())
-                .orElseThrow(() -> new NotFoundException("User not found."));
-            return Pair.of(member.getId(),
-                jwtProvider.createToken(member.getId(), member.getRole()));
+        var member = memberRepository.findByEmail(create.email());
+        if (member.isPresent()) {
+            String jwt = jwtProvider.createToken(member.get().getId(), member.get().getRole());
+            return Pair.of(member.get().getId(), jwt);
         }
 
-        var member = memberRepository.save(create.toEntity());
-        return Pair.of(member.getId(), jwtProvider.createToken(member.getId(), member.getRole()));
+        var savedMember = memberRepository.save(create.toEntity());
+        String jwt = jwtProvider.createToken(savedMember.getId(), savedMember.getRole());
+        return Pair.of(savedMember.getId(), jwt);
     }
 }
