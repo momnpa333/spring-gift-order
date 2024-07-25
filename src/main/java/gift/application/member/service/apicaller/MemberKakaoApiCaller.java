@@ -1,13 +1,11 @@
 package gift.application.member.service.apicaller;
 
 import static io.jsonwebtoken.Header.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gift.global.validate.TimeOutException;
 import java.net.URI;
 import java.time.Duration;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,14 +17,14 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class KakaoMemberApiCaller {
+public class MemberKakaoApiCaller {
 
     private static final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
     private static final Duration TIMEOUT = Duration.ofSeconds(2);
 
     private final RestTemplate restTemplate;
 
-    public KakaoMemberApiCaller(RestTemplateBuilder restTemplateBuilder) {
+    public MemberKakaoApiCaller(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder
             .setConnectTimeout(TIMEOUT)
             .setReadTimeout(TIMEOUT)
