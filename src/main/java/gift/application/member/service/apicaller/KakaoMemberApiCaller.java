@@ -15,8 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,14 +22,7 @@ import org.springframework.web.client.RestTemplate;
 public class KakaoMemberApiCaller {
 
     private static final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
-    private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private static final String GRANT_TYPE = "authorization_code";
     private static final Duration TIMEOUT = Duration.ofSeconds(2);
-    @Value("${kakao.client_id}")
-    private String CLIENT_ID;
-    @Value("${kakao.redirect_uri}")
-    private String REDIRECT_URI;
-
 
     private final RestTemplate restTemplate;
 
