@@ -7,12 +7,12 @@ import gift.application.token.TokenManager;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MemberOAuthService {
+public class MemberKakaoService {
 
     private final KakaoMemberApiCaller kakaoMemberApiCaller;
     private final TokenManager tokenManager;
 
-    public MemberOAuthService(KakaoMemberApiCaller kaKaoMemberApiCaller,
+    public MemberKakaoService(KakaoMemberApiCaller kaKaoMemberApiCaller,
         TokenManager tokenManager) {
         this.kakaoMemberApiCaller = kaKaoMemberApiCaller;
         this.tokenManager = tokenManager;
