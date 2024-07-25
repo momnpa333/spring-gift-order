@@ -54,6 +54,7 @@ public class KakaoTokenApiCaller {
             URI.create(KAKAO_TOKEN_URL));
         try {
             ResponseEntity<JsonNode> response = restTemplate.exchange(request, JsonNode.class);
+            System.out.println(response);
             String accessToken = response.getBody().get("access_token").asText();
             String refreshToken = response.getBody().get("refresh_token").asText();
             return new TokenSet(accessToken, refreshToken);
@@ -95,7 +96,6 @@ public class KakaoTokenApiCaller {
     private LinkedMultiValueMap<String, String> createGetAccessTokenBody(
         String authorizationCode) {
         var body = new LinkedMultiValueMap<String, String>();
-
         body.add("grant_type", GRANT_TYPE);
         body.add("client_id", CLIENT_ID);
         body.add("redirect_uri", REDIRECT_URI);
