@@ -12,4 +12,7 @@ public interface Token {
 
     boolean isValid();
 
+    void update(Token newToken);
+
+    Integer getExpiresIn();
 }
