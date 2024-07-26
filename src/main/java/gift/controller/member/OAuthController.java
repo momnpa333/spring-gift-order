@@ -3,9 +3,6 @@ package gift.controller.member;
 import gift.application.member.MemberFacade;
 import gift.controller.member.dto.MemberResponse;
 import gift.controller.member.dto.OAuthRequest;
-import gift.global.auth.Authenticate;
-import gift.global.auth.Authorization;
-import gift.global.auth.LoginInfo;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,10 +20,9 @@ public class OAuthController {
 
     @PostMapping("/oauth/login")
     public ResponseEntity<MemberResponse.Login> login(
-        @RequestBody @Valid OAuthRequest.LoginRequest request,
-        @Authenticate LoginInfo loginInfo
+        @RequestBody @Valid OAuthRequest.LoginRequest request
     ) {
-        var response = memberFacade.socialLogin(loginInfo.memberId(), request.toCommand());
+        var response = memberFacade.socialLogin(request.toCommand());
         return ResponseEntity.ok(MemberResponse.Login.from(response));
     }
 }
