@@ -1,18 +1,15 @@
 package gift.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.test.web.servlet.result.StatusResultMatchersExtensionsKt.isEqualTo;
 
+import gift.application.product.dto.OptionCommand.Purchase;
 import gift.application.product.service.OptionService;
 import gift.application.product.service.ProductService;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class OptionServiceTest {
+class OptionServiceTest {
 
     @Autowired
     private OptionService optionService;
@@ -39,7 +36,7 @@ public class OptionServiceTest {
         for (int i = 0; i < threadCount; i++) {
             excuterService.submit(() -> {
                 try {
-                    optionService.purchaseOption(1L, 1);
+                    optionService.purchaseOption(new Purchase(1L, 1));
                 } catch (Exception e) {
                     System.out.println(e.getMessage() + "retry");
                 }
@@ -65,7 +62,7 @@ public class OptionServiceTest {
         for (int i = 0; i < threadCount; i++) {
             excuterService.submit(() -> {
                 try {
-                    optionService.purchaseOption(1L, 1);
+                    optionService.purchaseOption(new Purchase(1L, 1));
                 } catch (Exception e) {
                     System.out.println(e.getMessage() + "retry");
                 }
@@ -90,7 +87,7 @@ public class OptionServiceTest {
         List<CompletableFuture<Void>> futures = IntStream.range(0, threadCount)
             .mapToObj(i -> CompletableFuture.runAsync(() -> {
                 try {
-                    optionService.purchaseOption(1L, 1);
+                    optionService.purchaseOption(new Purchase(1L, 1));
                 } catch (IllegalArgumentException e) {
                     throw new RuntimeException(e);
                 }
