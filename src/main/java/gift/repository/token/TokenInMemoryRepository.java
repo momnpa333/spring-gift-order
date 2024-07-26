@@ -1,6 +1,7 @@
 package gift.repository.token;
 
-import gift.model.product.Product;
+import gift.model.token.KakaoToken;
+import gift.model.token.Token;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Repository;
@@ -9,32 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class TokenInMemoryRepository implements TokenRepository {
 
-    private final Map<Long, String> AccessTokenStorage = new ConcurrentHashMap<>();
-    private final Map<Long, String> RefreshTokenStorage = new ConcurrentHashMap<>();
+    private final Map<Long, Token> TokenStorage = new ConcurrentHashMap<>();
 
     @Override
     @Transactional
-    public void saveAccessToken(Long userId, String accessToken) {
-        AccessTokenStorage.put(userId, accessToken);
+    public void saveToken(Long userId, KakaoToken token) {
+        TokenStorage.put(userId, token);
     }
 
     @Override
     @Transactional
-    public void saveRefreshToken(Long userId, String refreshToken) {
-        RefreshTokenStorage.put(userId, refreshToken);
+    public KakaoToken getToken(Long userId) {
+        return (KakaoToken) TokenStorage.get(userId);
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public String getAccessToken(Long userId) {
-        return AccessTokenStorage.get(userId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public String getRefreshToken(Long userId) {
-        return RefreshTokenStorage.get(userId);
-    }
-
 
 }
