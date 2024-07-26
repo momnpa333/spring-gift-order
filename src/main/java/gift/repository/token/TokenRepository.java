@@ -1,12 +1,11 @@
 package gift.repository.token;
 
+import gift.model.token.KakaoToken;
+import gift.model.token.Token;
+
 public interface TokenRepository {
 
-    public void saveAccessToken(Long userId, String accessToken);
+    public void saveToken(Long userId, KakaoToken token);
 
-    public void saveRefreshToken(Long userId, String refreshToken);
-
-    public String getAccessToken(Long userId);
-
-    public String getRefreshToken(Long userId);
+    public KakaoToken getToken(Long userId);
 }
