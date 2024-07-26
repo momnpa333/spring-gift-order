@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import gift.application.token.dto.TokenSet;
 import gift.global.config.KakaoProperties;
 import gift.global.validate.TimeOutException;
+import gift.model.token.KakaoToken;
 import java.net.URI;
 import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,19 +36,15 @@ public class KakaoTokenApiCaller {
     /**
      * 인가 코드를 사용해서 토큰을 가져옴
      */
-    public TokenSet getTokens(String authorizationCode) {
-        var headers = new HttpHeaders();
-        headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE);
+    public KakaoToken getToken(String authorizationCode) {
+        var headers = createFormUrlencodedHttpHeaders();
         var body = createGetAccessTokenBody(authorizationCode);
-        System.out.println(body);
+
         var request = new RequestEntity<>(body, headers, HttpMethod.POST,
             URI.create(kakaoProperties.tokenRequestUri()));
         try {
-            ResponseEntity<JsonNode> response = restTemplate.exchange(request, JsonNode.class);
-            System.out.println(response);
-            String accessToken = response.getBody().get("access_token").asText();
-            String refreshToken = response.getBody().get("refresh_token").asText();
-            return new TokenSet(accessToken, refreshToken);
+            KakaoToken token = restTemplate.exchange(request, KakaoToken.class).getBody();
+            return token;
         } catch (ResourceAccessException e) {
             throw new TimeOutException("네트워크 연결이 불안정 합니다.", e);
         } catch (HttpClientErrorException e) {
@@ -58,21 +55,27 @@ public class KakaoTokenApiCaller {
     /**
      * refresh token을 사용해서 access token을 갱신
      */
-    public TokenSet refreshAccessToken(String refreshToken) {
-        var headers = new LinkedMultiValueMap<String, String>();
-        headers.add("Content-Type", "application/x-www-form-urlencoded");
+    public KakaoToken refreshAccessToken(String refreshToken) {
+        var headers = createFormUrlencodedHttpHeaders();
         var body = createUpdateAccessTokenBody(refreshToken);
+
         var request = new RequestEntity<>(body, headers, HttpMethod.POST,
             URI.create(kakaoProperties.tokenRequestUri()));
         try {
-            ResponseEntity<JsonNode> response = restTemplate.exchange(request, JsonNode.class);
-            String newAccessToken = response.getBody().get("access_token").asText();
-            String newRefreshToken = response.getBody().get("refresh_token").asText();
-            return new TokenSet(newAccessToken, newRefreshToken);
+            KakaoToken token = restTemplate.exchange(request, KakaoToken.class).getBody();
+            System.out.println("newToken = " + token);
+            return token;
         } catch (Exception e) {
             throw new RuntimeException("토큰 갱신에 실패했습니다.", e);
         }
     }
+
+    private static HttpHeaders createFormUrlencodedHttpHeaders() {
+        var headers = new HttpHeaders();
+        headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE);
+        return headers;
+    }
+
 
     private LinkedMultiValueMap<String, String> createUpdateAccessTokenBody(
         String refreshToken) {
