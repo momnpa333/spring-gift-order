@@ -18,6 +18,15 @@ public class KakaoToken implements Token {
     public KakaoToken() {
     }
 
+    public KakaoToken(String accessToken, String tokenType, String refreshToken,
+        Integer expiresIn) {
+        this.accessToken = accessToken;
+        this.tokenType = tokenType;
+        this.refreshToken = refreshToken;
+        this.expiresIn = expiresIn;
+
+    }
+
     @Override
     public String getAccessToken() {
         return accessToken;
@@ -34,8 +43,19 @@ public class KakaoToken implements Token {
     }
 
     @Override
+    public Integer getExpiresIn() {
+        return expiresIn;
+    }
+
+    @Override
     public boolean isValid() {
         return getExpiredAt().isAfter(LocalDateTime.now());
+    }
+
+    @Override
+    public void update(Token newToken) {
+        this.accessToken = newToken.getAccessToken();
+        this.expiresIn = newToken.getExpiresIn();
     }
 
 }
