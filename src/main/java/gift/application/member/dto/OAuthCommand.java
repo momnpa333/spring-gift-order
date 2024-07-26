@@ -16,10 +16,10 @@ public class OAuthCommand {
         String nickname,
         Provider provider) {
 
-        public static MemberInfo from(JsonNode userInfo) {
+        public static MemberInfo from(MemberKakaoModel.MemberInfo memberInfo) {
             return new MemberInfo(
-                userInfo.get("kakao_account").get("email").asText(),
-                userInfo.get("properties").get("nickname").asText(),
+                memberInfo.kakaoAccount().email(),
+                memberInfo.properties().nickname(),
                 Provider.KAKAO
             );
         }
