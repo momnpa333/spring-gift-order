@@ -3,19 +3,13 @@ package gift.application.token.apicaller;
 import static io.jsonwebtoken.Header.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import gift.application.token.dto.TokenSet;
 import gift.global.config.KakaoProperties;
 import gift.global.validate.TimeOutException;
 import gift.model.token.KakaoToken;
 import java.net.URI;
-import java.time.Duration;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -63,7 +57,6 @@ public class KakaoTokenApiCaller {
             URI.create(kakaoProperties.tokenRequestUri()));
         try {
             KakaoToken token = restTemplate.exchange(request, KakaoToken.class).getBody();
-            System.out.println("newToken = " + token);
             return token;
         } catch (Exception e) {
             throw new RuntimeException("토큰 갱신에 실패했습니다.", e);
