@@ -38,7 +38,8 @@ public class TokenManager {
         }
 
         KakaoToken newToken = kakaoTokenApiCaller.refreshAccessToken(token.getRefreshToken());
-        tokenRepository.saveToken(userId, newToken);
+        token.update(newToken);
+        tokenRepository.saveToken(userId, token);
         return newToken;
     }
 }
