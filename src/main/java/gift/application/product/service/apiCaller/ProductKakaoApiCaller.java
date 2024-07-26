@@ -5,8 +5,8 @@ import static io.jsonwebtoken.Header.CONTENT_TYPE;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.application.product.service.apiCaller.dto.Link;
-import gift.application.product.service.apiCaller.dto.TemplateObject;
+import gift.application.product.service.apiCaller.dto.ProductKakaoModel.Link;
+import gift.application.product.service.apiCaller.dto.ProductKakaoModel.TemplateObject;
 import gift.global.config.KakaoProperties;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -32,14 +31,26 @@ public class ProductKakaoApiCaller {
     }
 
     public void sendMessage(String accessToken, String optionName) {
-        System.out.println("sendMessage");
-        System.out.println("url: " + kakaoProperties.messageRequestUri());
-        HttpHeaders headers = new HttpHeaders();
-        ObjectMapper objectMapper = new ObjectMapper();
+        var headers = createFormUrlencodedHttpHeaders(accessToken);
+        var body = createSendMessageBody(optionName);
+        var request = new RequestEntity<>(body, headers, HttpMethod.POST,
+            URI.create(kakaoProperties.messageRequestUri()));
 
-        headers.set("Authorization", "Bearer " + accessToken);
-        headers.add(CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        System.out.println("headers: " + headers);
+        try {
+            var statusCode = restTemplate.exchange(request, JsonNode.class).getStatusCode();
+            if (statusCode != HttpStatus.OK) {
+                throw new RuntimeException("메시지 전송에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("메시지 전송에 실패했습니다.", e);
+        }
+
+    }
+
+    private LinkedMultiValueMap<Object, Object> createSendMessageBody(
+        String optionName) {
+        var body = new LinkedMultiValueMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
 
         TemplateObject templateObject = new TemplateObject("text", makePurchaseMessage(optionName),
             new Link(null, null));
@@ -50,24 +61,15 @@ public class ProductKakaoApiCaller {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("메시지 전송에 실패했습니다.", e);
         }
-
-        // HTTP 요청 데이터 설정
-        var body = new LinkedMultiValueMap<>();
         body.set("template_object", templateObjectJson);
-        var request = new RequestEntity<>(body, headers, HttpMethod.POST,
-            URI.create(kakaoProperties.messageRequestUri()));
+        return body;
+    }
 
-        try {
-            ResponseEntity<JsonNode> response = restTemplate.exchange(request, JsonNode.class);
-            System.out.println("response: " + response);
-            if (response.getStatusCode() != HttpStatus.OK) {
-                throw new RuntimeException("메시지 전송에 실패했습니다.");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("메시지 전송에 실패했습니다.", e);
-        }
-
-
+    private static HttpHeaders createFormUrlencodedHttpHeaders(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.add(CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        return headers;
     }
 
     private String makePurchaseMessage(String optionName) {
