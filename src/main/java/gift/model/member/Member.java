@@ -70,6 +70,10 @@ public class Member extends BaseTimeEntity {
         return role;
     }
 
+    public void changeProvider(Provider provider) {
+        this.provider = provider;
+    }
+
     // 비밀번호 검증 메서드
     public boolean verifyPassword(String originalPassword) {
         String hashedPassword = PasswordUtil.hashPasswordWithSalt(originalPassword);
@@ -112,4 +116,6 @@ class PasswordUtil {
         }
         return sb.toString();
     }
+
+
 }
