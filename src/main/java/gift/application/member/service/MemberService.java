@@ -1,15 +1,13 @@
 package gift.application.member.service;
 
-import gift.application.token.TokenManager;
-import gift.application.token.dto.TokenSet;
 import gift.global.auth.jwt.JwtProvider;
 import gift.model.member.Member;
 import gift.global.validate.InvalidAuthRequestException;
 import gift.global.validate.NotFoundException;
+import gift.model.member.Provider;
 import gift.repository.member.MemberRepository;
 import gift.application.member.dto.MemberCommand;
 import gift.application.member.dto.MemberModel;
-import java.util.Optional;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,8 +54,10 @@ public class MemberService {
     public Pair<Long, String> socialLogin(MemberCommand.Create create) {
         var member = memberRepository.findByEmail(create.email());
         if (member.isPresent()) {
-            String jwt = jwtProvider.createToken(member.get().getId(), member.get().getRole());
-            return Pair.of(member.get().getId(), jwt);
+            var originMember = member.get();
+            originMember.changeProvider(Provider.KAKAO);
+            String jwt = jwtProvider.createToken(originMember.getId(), originMember.getRole());
+            return Pair.of(originMember.getId(), jwt);
         }
 
         var savedMember = memberRepository.save(create.toEntity());
