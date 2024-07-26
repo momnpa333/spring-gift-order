@@ -20,10 +20,14 @@ public class TokenManager {
     /**
      * 인가 코드를 사용해서 토큰 가져오기
      */
-    public KakaoToken getTokenAndSaveByAuthorizationCode(Long memberId, String authorizationCode) {
+    public KakaoToken getTokenByAuthorizationCode(String authorizationCode) {
         KakaoToken token = kakaoTokenApiCaller.getToken(authorizationCode);
-        tokenRepository.saveToken(memberId, token);
+        System.out.println("token = " + token.getAccessToken());
         return token;
+    }
+
+    public void saveToken(Long userId, KakaoToken token) {
+        tokenRepository.saveToken(userId, token);
     }
 
     public KakaoToken getToken(Long userId) {
