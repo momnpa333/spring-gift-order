@@ -1,7 +1,6 @@
 package gift.application.token;
 
 import gift.application.token.apicaller.KakaoTokenApiCaller;
-import gift.application.token.dto.TokenSet;
 import gift.model.token.KakaoToken;
 import gift.repository.token.TokenRepository;
 import org.springframework.stereotype.Component;
