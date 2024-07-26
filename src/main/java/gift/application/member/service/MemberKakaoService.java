@@ -1,6 +1,7 @@
 package gift.application.member.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import gift.application.member.dto.MemberKakaoModel;
 import gift.application.member.dto.OAuthCommand;
 import gift.application.member.service.apicaller.MemberKakaoApiCaller;
 import gift.application.token.TokenManager;
@@ -22,7 +23,7 @@ public class MemberKakaoService {
      * 토큰을 사용해서 사용자 정보를 가져오는 로직
      */
     public OAuthCommand.MemberInfo getMemberInfo(String accessToken) {
-        JsonNode userInfo = memberKakaoApiCaller.getMemberInfo(accessToken);
-        return OAuthCommand.MemberInfo.from(userInfo);
+        MemberKakaoModel.MemberInfo memberInfo = memberKakaoApiCaller.getMemberInfo(accessToken);
+        return OAuthCommand.MemberInfo.from(memberInfo);
     }
 }
