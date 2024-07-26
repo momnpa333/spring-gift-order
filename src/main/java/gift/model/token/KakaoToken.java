@@ -1,15 +1,19 @@
 package gift.model.token;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 
 public class KakaoToken implements Token {
 
+    @JsonProperty("access_token")
     private String accessToken;
+    @JsonProperty("token_type")
     private String tokenType;
+    @JsonProperty("refresh_token")
     private String refreshToken;
-    private Long expiresIn;
-    private LocalDateTime CreatedAt;
-    private LocalDateTime ExpiredAt;
+    @JsonProperty("expires_in")
+    private Integer expiresIn;
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
     public KakaoToken() {
     }
@@ -26,12 +30,12 @@ public class KakaoToken implements Token {
 
     @Override
     public LocalDateTime getExpiredAt() {
-        return ExpiredAt;
+        return createdAt.plusSeconds(expiresIn);
     }
 
     @Override
     public boolean isValid() {
-        return ExpiredAt.isAfter(LocalDateTime.now());
+        return getExpiredAt().isAfter(LocalDateTime.now());
     }
 
 }
