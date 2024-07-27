@@ -15,4 +15,11 @@ public class MemberModel {
         }
     }
 
+    public record IdAndJwt(
+        Long memberId,
+        String jwt
+    ) {
+
+    }
+
 }
