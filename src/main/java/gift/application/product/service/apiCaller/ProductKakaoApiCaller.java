@@ -21,13 +21,15 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class ProductKakaoApiCaller {
 
+    private final ObjectMapper objectMapper;
     private final KakaoProperties kakaoProperties;
     private final RestTemplate restTemplate;
 
     public ProductKakaoApiCaller(RestTemplate restTemplate,
-        KakaoProperties kakaoProperties) {
+        KakaoProperties kakaoProperties, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.kakaoProperties = kakaoProperties;
+        this.objectMapper = objectMapper;
     }
 
     public void sendMessage(String accessToken, String optionName) {
@@ -50,7 +52,6 @@ public class ProductKakaoApiCaller {
     private LinkedMultiValueMap<Object, Object> createSendMessageBody(
         String optionName) {
         var body = new LinkedMultiValueMap<>();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         TemplateObject templateObject = new TemplateObject("text", makePurchaseMessage(optionName),
             new Link(null, null));
