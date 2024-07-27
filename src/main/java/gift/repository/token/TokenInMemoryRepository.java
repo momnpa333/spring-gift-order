@@ -13,13 +13,11 @@ public class TokenInMemoryRepository implements TokenRepository {
     private final Map<Long, Token> TokenStorage = new ConcurrentHashMap<>();
 
     @Override
-    @Transactional
     public void saveToken(Long userId, KakaoToken token) {
         TokenStorage.put(userId, token);
     }
 
     @Override
-    @Transactional
     public KakaoToken getToken(Long userId) {
         return (KakaoToken) TokenStorage.get(userId);
     }
