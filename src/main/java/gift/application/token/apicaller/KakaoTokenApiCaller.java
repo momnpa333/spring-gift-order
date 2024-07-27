@@ -37,8 +37,7 @@ public class KakaoTokenApiCaller {
         var request = new RequestEntity<>(body, headers, HttpMethod.POST,
             URI.create(kakaoProperties.tokenRequestUri()));
         try {
-            KakaoToken token = restTemplate.exchange(request, KakaoToken.class).getBody();
-            return token;
+            return restTemplate.exchange(request, KakaoToken.class).getBody();
         } catch (ResourceAccessException e) {
             throw new TimeOutException("네트워크 연결이 불안정 합니다.", e);
         } catch (HttpClientErrorException e) {
