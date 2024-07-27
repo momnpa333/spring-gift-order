@@ -1,11 +1,14 @@
 package gift.application.product;
 
 import gift.application.product.dto.OptionCommand;
+import gift.application.product.dto.OptionCommand.Purchase;
 import gift.application.product.dto.OptionModel;
+import gift.application.product.dto.OptionModel.Info;
 import gift.application.product.dto.ProductCommand;
 import gift.application.product.dto.ProductModel;
 import gift.application.product.service.CategoryService;
 import gift.application.product.service.OptionService;
+import gift.application.product.service.ProductKakaoService;
 import gift.application.product.service.ProductService;
 
 import java.util.List;
@@ -18,11 +21,14 @@ public class ProductFacade {
 
     private final OptionService optionService;
     private final ProductService productService;
+    private final ProductKakaoService productKakaoService;
 
     public ProductFacade(OptionService optionService,
-        ProductService productService) {
+        ProductService productService,
+        ProductKakaoService productKakaoService) {
         this.optionService = optionService;
         this.productService = productService;
+        this.productKakaoService = productKakaoService;
     }
 
     @Transactional
@@ -45,4 +51,12 @@ public class ProductFacade {
         List<OptionModel.Info> optionModel = optionService.getOptions(productId);
         return Pair.of(productModel, optionModel);
     }
+
+    @Transactional
+    public OptionModel.Info purchase(Long memberId, Purchase command) {
+        OptionModel.Info info = optionService.purchaseOption(command);
+        productKakaoService.sendPurchaseMessage(memberId, info.name());
+        return info;
+    }
+
 }

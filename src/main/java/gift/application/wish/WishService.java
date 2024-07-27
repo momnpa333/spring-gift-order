@@ -1,15 +1,18 @@
 package gift.application.wish;
 
 import gift.model.member.Member;
+import gift.model.product.Option;
 import gift.model.product.Product;
 import gift.model.wish.Wish;
 import gift.repository.member.MemberRepository;
+import gift.repository.product.OptionRepository;
 import gift.repository.product.ProductRepository;
 import gift.repository.wish.WishJpaRepository;
 import gift.global.validate.NotFoundException;
 import gift.repository.wish.WishRepository;
 import gift.application.wish.dto.WishCommand;
 import gift.application.wish.dto.WishModel;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,12 +24,15 @@ public class WishService {
     private final WishRepository wishRepository;
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
+    private final OptionRepository optionRepository;
 
     public WishService(WishJpaRepository wishRepository, MemberRepository memberRepository,
-        ProductRepository productRepository) {
+        ProductRepository productRepository,
+        OptionRepository optionRepository) {
         this.wishRepository = wishRepository;
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
+        this.optionRepository = optionRepository;
     }
 
     @Transactional
@@ -74,5 +80,15 @@ public class WishService {
         Page<Wish> wishPage = wishRepository.findAllByMemberByIdDesc(memberId, pageable);
 
         return wishPage.map(WishModel.Info::from);
+    }
+
+    @Transactional
+    public void deleteWishByOption(Long memberId, Long optionId) {
+        Option option = optionRepository.findById(optionId).orElseThrow(
+            () -> new NotFoundException("Option not found")
+        );
+        Long productId = option.getProduct().getId();
+        wishRepository.findByMemberIdAndProductId(memberId, productId)
+            .ifPresent(w -> wishRepository.deleteById(w.getId()));
     }
 }

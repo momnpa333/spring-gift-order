@@ -4,10 +4,11 @@ import gift.global.auth.jwt.JwtProvider;
 import gift.model.member.Member;
 import gift.global.validate.InvalidAuthRequestException;
 import gift.global.validate.NotFoundException;
+import gift.model.member.Provider;
 import gift.repository.member.MemberRepository;
 import gift.application.member.dto.MemberCommand;
 import gift.application.member.dto.MemberModel;
-import java.util.Optional;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,14 +51,17 @@ public class MemberService {
     }
 
     @Transactional
-    public String socialLogin(MemberCommand.Create create) {
-        if (memberRepository.existsByEmail(create.email())) {
-            var member = memberRepository.findByEmail(create.email())
-                .orElseThrow(() -> new NotFoundException("User not found."));
-            return jwtProvider.createToken(member.getId(), member.getRole());
+    public Pair<Long, String> socialLogin(MemberCommand.Create create) {
+        var member = memberRepository.findByEmail(create.email());
+        if (member.isPresent()) {
+            var originMember = member.get();
+            originMember.changeProvider(Provider.KAKAO);
+            String jwt = jwtProvider.createToken(originMember.getId(), originMember.getRole());
+            return Pair.of(originMember.getId(), jwt);
         }
 
-        var member = memberRepository.save(create.toEntity());
-        return jwtProvider.createToken(member.getId(), member.getRole());
+        var savedMember = memberRepository.save(create.toEntity());
+        String jwt = jwtProvider.createToken(savedMember.getId(), savedMember.getRole());
+        return Pair.of(savedMember.getId(), jwt);
     }
 }

@@ -45,4 +45,16 @@ public class OptionRequest {
         }
     }
 
+    public record Purchase(
+        @NotNull
+        Long optionId,
+        @Min(1)
+        Integer quantity
+    ) {
+
+        public OptionCommand.Purchase toCommand() {
+            return new OptionCommand.Purchase(optionId, quantity);
+        }
+    }
+
 }

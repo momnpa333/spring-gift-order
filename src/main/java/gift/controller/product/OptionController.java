@@ -1,10 +1,14 @@
 package gift.controller.product;
 
+import gift.application.product.ProductFacade;
+import gift.application.wish.WishService;
 import gift.controller.product.dto.OptionRequest;
 import gift.controller.product.dto.OptionResponse;
 import gift.application.product.service.OptionService;
 import gift.application.product.dto.OptionModel;
+import gift.global.auth.Authenticate;
 import gift.global.auth.Authorization;
+import gift.global.auth.LoginInfo;
 import gift.model.member.Role;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -21,9 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class OptionController {
 
     private final OptionService optionService;
+    private final ProductFacade productFacade;
+    private final WishService wishService;
 
-    public OptionController(OptionService optionService) {
+    public OptionController(OptionService optionService, ProductFacade productFacade,
+        WishService wishService) {
         this.optionService = optionService;
+        this.productFacade = productFacade;
+        this.wishService = wishService;
     }
 
     @GetMapping("/products/{id}/options")
@@ -67,5 +76,17 @@ public class OptionController {
     ) {
         optionService.deleteOption(productId, optionId);
         return ResponseEntity.ok("Deleted correctly");
+    }
+
+    @Authorization(role = Role.USER)
+    @PostMapping("/products/options/purchase")
+    public ResponseEntity<String> purchaseOption(
+        @RequestBody @Valid OptionRequest.Purchase request,
+        @Authenticate LoginInfo loginInfo
+    ) {
+        OptionModel.Info optionInfo = productFacade.purchase(loginInfo.memberId(),
+            request.toCommand());
+        wishService.deleteWishByOption(loginInfo.memberId(), optionInfo.id());
+        return ResponseEntity.ok("구매에 성공하셨습니다");
     }
 }

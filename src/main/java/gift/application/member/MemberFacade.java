@@ -3,24 +3,37 @@ package gift.application.member;
 import gift.application.member.dto.MemberCommand;
 import gift.application.member.dto.OAuthCommand;
 import gift.application.member.service.MemberService;
-import gift.application.member.service.OAuthService;
+import gift.application.member.service.MemberKakaoService;
+import gift.application.token.TokenManager;
+import gift.model.token.KakaoToken;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class MemberFacade {
 
     private final MemberService memberService;
-    private final OAuthService oAuthService;
+    private final MemberKakaoService memberKakaoService;
+    private final TokenManager tokenManager;
 
-    public MemberFacade(MemberService memberService, OAuthService oAuthService) {
+    public MemberFacade(MemberService memberService, MemberKakaoService memberKakaoService,
+        TokenManager tokenManager) {
         this.memberService = memberService;
-        this.oAuthService = oAuthService;
+        this.memberKakaoService = memberKakaoService;
+        this.tokenManager = tokenManager;
     }
 
+    @Transactional
     public String socialLogin(OAuthCommand.Login command) {
-        OAuthCommand.MemberInfo memberInfo = oAuthService.getMemberInfo(command);
+        KakaoToken token = tokenManager.getTokenByAuthorizationCode(
+            command.authorizationCode());
+        OAuthCommand.MemberInfo memberInfo = memberKakaoService.getMemberInfo(
+            token.getAccessToken());
         MemberCommand.Create create = memberInfo.toCreateCommand();
-        return memberService.socialLogin(create);
+        Pair<Long, String> memberIdAndJwt = memberService.socialLogin(create);
+        tokenManager.saveToken(memberIdAndJwt.getFirst(), token);
+        return memberIdAndJwt.getSecond();
     }
 
 }
