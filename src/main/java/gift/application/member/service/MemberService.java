@@ -51,17 +51,17 @@ public class MemberService {
     }
 
     @Transactional
-    public Pair<Long, String> socialLogin(MemberCommand.Create create) {
+    public MemberModel.IdAndJwt socialLogin(MemberCommand.Create create) {
         var member = memberRepository.findByEmail(create.email());
         if (member.isPresent()) {
             var originMember = member.get();
             originMember.changeProvider(Provider.KAKAO);
             String jwt = jwtProvider.createToken(originMember.getId(), originMember.getRole());
-            return Pair.of(originMember.getId(), jwt);
+            return new MemberModel.IdAndJwt(originMember.getId(), jwt);
         }
 
         var savedMember = memberRepository.save(create.toEntity());
         String jwt = jwtProvider.createToken(savedMember.getId(), savedMember.getRole());
-        return Pair.of(savedMember.getId(), jwt);
+        return new MemberModel.IdAndJwt(savedMember.getId(), jwt);
     }
 }
