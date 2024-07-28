@@ -6,6 +6,7 @@ import gift.global.auth.Authorization;
 import gift.model.member.Role;
 import gift.application.product.service.CategoryService;
 import gift.application.product.dto.CategoryModel;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +27,14 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @Operation(summary = "카테고리 목록 조회", description = "카테고리 목록 조회 api")
     @GetMapping("/categories")
     public ResponseEntity<CategoryResponse.InfoList> getCategories() {
         List<CategoryModel.Info> model = categoryService.getCategories();
         return ResponseEntity.ok(CategoryResponse.InfoList.from(model));
     }
 
+    @Operation(summary = "카테고리 생성", description = "카테고리 생성 api")
     @Authorization(role = Role.ADMIN)
     @PostMapping("/categories")
     public ResponseEntity<CategoryResponse.Info> createCategory(
@@ -41,6 +44,7 @@ public class CategoryController {
         return ResponseEntity.ok(CategoryResponse.Info.from(model));
     }
 
+    @Operation(summary = "카테고리 조회", description = "카테고리 조회 api")
     @GetMapping("/categories/{id}")
     public ResponseEntity<CategoryResponse.Info> getCategory(
         @PathVariable("id") Long id
@@ -49,6 +53,7 @@ public class CategoryController {
         return ResponseEntity.ok(CategoryResponse.Info.from(model));
     }
 
+    @Operation(summary = "카테고리 수정", description = "카테고리 수정 api")
     @Authorization(role = Role.ADMIN)
     @PutMapping("/categories/{id}")
     public ResponseEntity<CategoryResponse.Info> updateCategory(
@@ -59,6 +64,7 @@ public class CategoryController {
         return ResponseEntity.ok(CategoryResponse.Info.from(model));
     }
 
+    @Operation(summary = "카테고리 삭제", description = "카테고리 삭제 api")
     @Authorization(role = Role.ADMIN)
     @DeleteMapping("/categories/{id}")
     public String deleteCategory(

@@ -10,6 +10,7 @@ import gift.global.auth.Authenticate;
 import gift.global.auth.Authorization;
 import gift.global.auth.LoginInfo;
 import gift.model.member.Role;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ public class OptionController {
         this.wishService = wishService;
     }
 
+    @Operation(summary = "옵션 목록 조회", description = "옵션 목록 조회 api")
     @GetMapping("/products/{id}/options")
     public ResponseEntity<OptionResponse.InfoList> getOptions(
         @PathVariable("id") Long productId
@@ -44,6 +46,7 @@ public class OptionController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "옵션 생성", description = "옵션 생성 api")
     @Authorization(role = Role.ADMIN)
     @PostMapping("/products/{id}/options")
     public ResponseEntity<OptionResponse.InfoList> createOption(
@@ -55,6 +58,7 @@ public class OptionController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "옵션 수정", description = "옵션 수정 api")
     @Authorization(role = Role.ADMIN)
     @PutMapping("/products/{productId}/options/{optionId}")
     public ResponseEntity<OptionResponse.Info> updateOption(
@@ -68,6 +72,7 @@ public class OptionController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "옵션 삭제", description = "옵션 삭제 api")
     @Authorization(role = Role.ADMIN)
     @DeleteMapping("/products/{productId}/options/{optionId}")
     public ResponseEntity<String> deleteOption(
@@ -78,6 +83,7 @@ public class OptionController {
         return ResponseEntity.ok("Deleted correctly");
     }
 
+    @Operation(summary = "옵션 구매", description = "옵션 구매 api")
     @Authorization(role = Role.USER)
     @PostMapping("/products/options/purchase")
     public ResponseEntity<String> purchaseOption(

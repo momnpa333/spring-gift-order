@@ -12,6 +12,7 @@ import gift.application.product.service.OptionService;
 import gift.application.product.service.ProductService;
 import gift.application.product.dto.OptionModel;
 import gift.application.product.dto.ProductModel;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -43,6 +44,7 @@ public class ProductController {
         this.productFacade = productFacade;
     }
 
+    @Operation(summary = "상품 조회", description = "상품 조회 api")
     @GetMapping("/products/{id}")
     public ResponseEntity<ProductResponse.Info> getProduct(
         @PathVariable("id") Long id
@@ -53,6 +55,7 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "상품 등록", description = "상품 등록 api")
     @Authorization(role = Role.ADMIN)
     @PostMapping("/products")
     public ResponseEntity<ProductResponse.Info> createProduct(
@@ -66,7 +69,7 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-
+    @Operation(summary = "상품 수정", description = "상품 수정 api")
     @Authorization(role = Role.ADMIN)
     @PutMapping("/products/{id}")
     public ResponseEntity<ProductResponse.Info> updateProduct(
@@ -80,6 +83,7 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "상품 삭제", description = "상품 삭제 api")
     @Authorization(role = Role.ADMIN)
     @DeleteMapping("/products/{id}")
     public ResponseEntity<String> deleteProduct(
@@ -89,6 +93,7 @@ public class ProductController {
         return ResponseEntity.ok("Product deleted successfully.");
     }
 
+    @Operation(summary = "상품 목록 조회", description = "상품 목록 조회 api")
     @GetMapping("/products")
     public ResponseEntity<PageResponse<ProductResponse.Summary>> getProductsPaging(
         @RequestParam(name = "SearchType", required = false, defaultValue = "ALL") SearchType searchType,
