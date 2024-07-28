@@ -50,7 +50,6 @@ public class MemberService {
         return MemberModel.Info.from(member);
     }
 
-    @Transactional
     public MemberModel.IdAndJwt socialLogin(MemberCommand.Create create) {
         var member = memberRepository.findByEmail(create.email());
         if (member.isPresent()) {

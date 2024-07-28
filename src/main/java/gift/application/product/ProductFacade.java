@@ -52,7 +52,7 @@ public class ProductFacade {
         return Pair.of(productModel, optionModel);
     }
 
-    @Transactional
+
     public OptionModel.Info purchase(Long memberId, Purchase command) {
         OptionModel.Info info = optionService.purchaseOption(command);
         productKakaoService.sendPurchaseMessage(memberId, info.name());

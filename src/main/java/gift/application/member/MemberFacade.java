@@ -24,7 +24,6 @@ public class MemberFacade {
         this.tokenManager = tokenManager;
     }
 
-    @Transactional
     public String socialLogin(OAuthCommand.Login command) {
         KakaoToken token = tokenManager.getTokenByAuthorizationCode(
             command.authorizationCode());
